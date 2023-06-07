@@ -1,147 +1,47 @@
 // Consider a scenario for Hospital to cater services to different kinds of patients as Serious (top priority), b) non-serious (medium priority), c) General Checkup (Least priority). Implement the priority queue to cater services to the patients.
-
-#include<iostream>
-#include<string>
-
-#define N 20
-
-#define SERIOUS 10
-#define NONSERIOUS 5
-#define CHECKUP 1
-
+#include <iostream>
+#include <string>
+#include <queue>
 using namespace std;
-string Q[N];
-int Pr[N];
-int r = -1,f = -1;
-void enqueue(string data,int p)//Enqueue function to insert data and its priority in queue
-{
-	int i;
-	if((f==0)&&(r==N-1)) //Check if Queue is full
-		cout<<"Queue is full";
-	else {
-		if(f==-1) { //if Queue is empty
-			f = r = 0;
-			Q[r] = data;
-			Pr[r] = p;
 
-		}
-		else if(r == N-1) { //if there there is some elemets in Queue
-			for(i=f;i<=r;i++) { 
-                                Q[i-f] = Q[i]; 
-                                Pr[i-f] = Pr[i];
-                                r = r-f; 
-                                f = 0;
-                                for(i = r;i>f;i--) {
-					if(p>Pr[i]) {
-						Q[i+1] = Q[i];
-						Pr[i+1] = Pr[i];
-					}
-					else break;
-						
-					Q[i+1] = data;
-					Pr[i+1] = p;
-					r++;
-				}
-			}
-		}
-		else {
-			for(i = r;i>=f;i--) {
-				if(p>Pr[i]) {
-					Q[i+1] = Q[i];
-					Pr[i+1] = Pr[i];	
-				}
-				else break;
-			}
-			Q[i+1] = data;
-			Pr[i+1] = p;
-			r++;
-		}	
-	}
+// Structure to represent a patient
+struct Patient {
+    string name;
+    int priority;
+};
 
-}
-void print() { //print the data of Queue
-	int i;
-	for(i=f;i<=r;i++) {
-		cout << "Patient's Name - "<<Q[i];
-		switch(Pr[i]) {
-			case 1: 
-				cout << " Priority - 'Checkup' " << endl;
-			break;
-			case 5:
-				cout << " Priority - 'Non-serious' " << endl;
-			break;
-			case 10:
-				cout << " Priority - 'Serious' " << endl;
-			break;
-			default:
-				cout << "Priority not found" << endl;
-		}
-	}
-}
-
-void dequeue() { //remove the data from front
-	if(f == -1) {
-		cout<<"Queue is Empty";
-	}	
-	else {
-	cout<<"deleted Element ="<<Q[f]<<endl;
-	cout<<"Its Priority = "<<Pr[f]<<endl;
-		if(f==r) f = r = -1;
-		else f++;
-	}
+// Function to compare two patients based on their priorities
+bool operator<(const Patient& p1, const Patient& p2) {
+    return p1.priority < p2.priority;
 }
 
 int main() {
-	string data;
-	int opt,n,i,p;
-	cout<<"Enter Your Choice:-"<<endl;
-	do {
-	cout << "1 for Insert the Data in Queue" << endl << "2 for show the Data in Queue " << endl << "3 for Delete the data from the Queue" 
-		<< endl << "0 for Exit"<< endl;
-	cin >> opt;
-		switch(opt) {
-			case 1:
-				cout << "Enter the number of patinent" << endl;
-				cin >> n;
-				i = 0;
-				while(i < n) {
-					cout << "Enter your name of the patient : ";
-					cin >> data;
-					ifnotdoagain: 
-						cout << "Enter your Prioritys (0: serious, 1: non-serious, 2: genral checkup) : ";
-						cin >> p;
-						switch(p) {
-							case 0: 
-								enqueue(data,SERIOUS);
-							break;
-							case 1: 
-								enqueue(data,NONSERIOUS);
-							break;
-							case 2: 
-								enqueue(data,CHECKUP);
-							break;
-							default:
-								goto ifnotdoagain;
-						}
-						
-					i++;
-				}
-			break;
-			case 2:
-				print();
-			break;
-			case 3:
-				 dequeue();
-			break;
-			case 0:
-				cout << "Bye Bye !" << endl;
-			break;
-			default:
-			cout<<"Incorrect Choice"<<endl;
+    priority_queue<Patient> patientQueue;
 
-		}
-	}while(opt!=0);
-        return 0;
+    // Taking input from the user
+    int numPatients;
+    cout << "Enter the number of patients: ";
+    cin >> numPatients;
+
+    for (int i = 0; i < numPatients; i++) {
+        Patient p;
+        cout << "Enter the name of patient " << i+1 << ": ";
+        cin >> p.name;
+        cout << "Enter the priority of patient " << i+1 << " (3: Serious, 2: Non-serious, 1: General Checkup): ";
+        cin >> p.priority;
+
+        patientQueue.push(p);
+    }
+
+    // Serving patients in priority order
+    cout << "\nServing patients:\n";
+    while (!patientQueue.empty()) {
+        Patient currentPatient = patientQueue.top();
+        patientQueue.pop();
+        cout << "Name: " << currentPatient.name << " | Priority: " << currentPatient.priority << endl;
+    }
+
+    return 0;
 }
 
 
